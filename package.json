@@ -1,0 +1,11 @@
+{
+    "name": "schrodinger",
+    "version": "1.0.0",
+    "description": "Arbitrator of Uchicago HvZ life and death status",
+    "main": "schrodinger.js",
+    "author": "Nick Howlett",
+    "dependencies": {
+        "discord.io": "https://github.com/woor/discord.io/tarball/gateway_v6",
+        "winston": "^3.2.1"
+    }
+}
