@@ -1,47 +1,74 @@
-var Discord = require('discord.js');
-var logger = require('winston');
-var auth = require('./auth.json');
+const Discord = require('discord.js');
+const logger = require('winston');
+const auth = require('./auth.json');
+const playerdb = require('./playerdb');
 
-var client = new Discord.Client();
+console.log("Booting up Schrodinger");
+
+const client = new Discord.Client();
+const guildconstants = {};
+
 
 client.login(auth.token);
 
 client.on("ready", () => {
-    console.log("I am ready!");
+    console.log("Schrodinger Online");
+    client.guilds.tap(guild => {
+        guildconstants[guild.id] = {zombie: 0, human: 0};
+        guildconstants[guild.id].zombie = guild.roles.find(role => role.name === "Zombies");
+        guildconstants[guild.id].human = guild.roles.find(role => role.name === "Humans");
+    })
 });
+
+
+
 const prefix = "!";
+
    
-client.on("message", (message) => {
-    if (!message.content.startsWith(prefix) || message.author.bot) return;
-    var text = message.content.slice(1);
-    var args = text.split(" ");
+client.on("message", message => {
+    if (!message.content.startsWith(prefix)) return;
+    let text = message.content.slice(1);
+    let args = text.split(" ");
+
     switch(args[0]) {
-
-        case "ping":
-            message.channel.send("Pong!");
-        break;
-
         case "bandanna":
             message.channel.send("Q: How should I wear my bandana? \n A: If you\'re a human, the bandana must be around your upper arm over all layers of clothing.  If you\'re a zombie, the bandana can be worn either around your neck or your head. Bandanas which are not visible from 360°  are not legally worn and tags by zombies without legal bandana placement will be discounted The bandana must be worn at all times except when leaving campus.");
         break;
 
-        case "addrole":
-            var user = client.users.find(user => user.username === args[1]);
-            var guild_user = message.guild.members.get(user.id);
-            var role = message.guild.roles.find(role => role.name === args[2]);
-            guild_user.addRole(role.id);
-        break; 
+        case "record_death":
+            if(message.author.username !== "Schrodinger") return;
+            kill_player(message.guild.members.find(member => member.user.tag === args[1]));
+            message.channel.send(`Recorded the death of ${args[1]}`);
+        break;
 
-        case "deleterole":
-        var user = client.users.find(user => user.username === args[1]);
-        var guild_user = message.guild.members.get(user.id);
-        var role = guild_user.roles.find(role => role.name === args[2]);
-        guild_user.removeRole(role.id);
-        break;           
+        case "record_resurrection":
+            if(message.author.username !== "Schrodinger") return;
+            revive_player(message.guild.members.find(member => member.user.tag === args[1]));
+            message.channel.send(`Recorded resurrection of ${args[1]}`);
+        break;
+
+        case "register_player":
+            if(message.author.username !== "Schrodinger") return;
+            playerdb.find_user(args[1], row =>{
+                if(row){
+                    message.channel.send("already registered");
+                }
+                else{
+                    playerdb.register_user(args[1], args[2]);
+                    message.channel.send(`Registered player ${args[1]} as ${args[2] ? "alive" : "dead"}`);
+                }
+            });
+        break;
     };
 });
 
+function kill_player(guildmember){
+    guildmember.addRole(guildconstants[guildmember.guild.id].zombie);
+    guildmember.removeRole(guildconstants[guildmember.guild.id].human);
+    return
+}
 
-function find_by_name(client, username){
-    
+function revive_player(guildmember){
+    guildmember.addRole(guildconstants[guildmember.guild.id].human);
+    guildmember.removeRole(guildconstants[guildmember.guild.id].zombie);
 }
