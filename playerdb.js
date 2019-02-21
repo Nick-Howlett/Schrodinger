@@ -13,9 +13,9 @@ db.run(
         players( 
             id integer PRIMARY KEY, 
             tag VARCHAR(255) NOT NULL UNIQUE, 
-            dead integer NOT NULL
+            human integer NOT NULL
         )
-    `)
+    `);
 
 
 module.exports = {
@@ -25,18 +25,29 @@ module.exports = {
                         FROM
                             players
                         WHERE
-                            tag = ?;`
+                            tag = ?;`;
         db.get(query, [tag], (err, row) => {
             if(err) console.error(err.message);
             return cb(row);
-        })
+        });
     },
 
     register_user : (tag, dead) => {
         const query = `INSERT INTO
                             players (tag, dead) 
                         VALUES 
-                            (?, ?);`
-        db.run(query, [tag, dead])
+                            (?, ?);`;
+        db.run(query, [tag, dead]);
+    },
+
+    update_user : (id, tag, dead) => {
+        const query = `UPDATE 
+                            players
+                        SET 
+                            tag = ?, dead = ?
+                        WHERE
+                            id = ?
+                            `;
+        db.run(query, [tag, id, dead]);
     }
-}
+};

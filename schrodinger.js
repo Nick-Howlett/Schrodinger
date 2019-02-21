@@ -51,7 +51,7 @@ client.on("message", message => {
             if(message.author.username !== "Schrodinger") return;
             playerdb.find_user(args[1], row =>{
                 if(row){
-                    message.channel.send("already registered");
+                    playerdb.update_user(row.id, args[1], args[2]);
                 }
                 else{
                     playerdb.register_user(args[1], args[2]);
@@ -65,10 +65,11 @@ client.on("message", message => {
 function kill_player(guildmember){
     guildmember.addRole(guildconstants[guildmember.guild.id].zombie);
     guildmember.removeRole(guildconstants[guildmember.guild.id].human);
-    return
+    return;
 }
 
 function revive_player(guildmember){
     guildmember.addRole(guildconstants[guildmember.guild.id].human);
     guildmember.removeRole(guildconstants[guildmember.guild.id].zombie);
+    return;
 }
