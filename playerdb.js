@@ -8,7 +8,8 @@ const db = this.db = new sqlite3.Database('./db/players.db', err => {
     console.log("Connected to players database");
 });
 
-db.run(
+function create_table() {
+    db.run(
     `CREATE TABLE IF NOT EXISTS 
         players( 
             id integer PRIMARY KEY, 
@@ -16,7 +17,8 @@ db.run(
             human integer NOT NULL
         )
     `);
-
+}
+create_table();
 
 module.exports = {
     find_user : (tag, cb) => {
@@ -49,5 +51,10 @@ module.exports = {
                             id = ?
                             `;
         db.run(query, [tag, id, human]);
+    },
+
+    reset_table : () => {
+        db.run("DROP TABLE players;");
+        create_table();
     }
 };
