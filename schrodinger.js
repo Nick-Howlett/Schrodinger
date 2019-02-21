@@ -67,7 +67,6 @@ client.on("message", message => {
                     if(player){
                         parseInt(args[2]) ? revive_player(player) : kill_player(player);
                     }
-                    message.channel.send(`Registered player ${args[1]} as ${parseInt(args[2]) ? "alive" : "dead"}`);
                 }
             });
         break;
