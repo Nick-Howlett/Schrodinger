@@ -21,7 +21,7 @@ db.run(
 module.exports = {
     find_user : (tag, cb) => {
         const query = `SELECT
-                            tag, dead
+                            tag, human
                         FROM
                             players
                         WHERE
@@ -32,22 +32,22 @@ module.exports = {
         });
     },
 
-    register_user : (tag, dead) => {
+    register_user : (tag, human) => {
         const query = `INSERT INTO
-                            players (tag, dead) 
+                            players (tag, human) 
                         VALUES 
                             (?, ?);`;
-        db.run(query, [tag, dead]);
+        db.run(query, [tag, human]);
     },
 
-    update_user : (id, tag, dead) => {
+    update_user : (id, tag, human) => {
         const query = `UPDATE 
                             players
                         SET 
-                            tag = ?, dead = ?
+                            tag = ?, human = ?
                         WHERE
                             id = ?
                             `;
-        db.run(query, [tag, id, dead]);
+        db.run(query, [tag, id, human]);
     }
 };

@@ -38,6 +38,7 @@ client.on("message", message => {
         case "record_death":
             if(message.author.username !== "Schrodinger") return;
             kill_player(message.guild.members.find(member => member.user.tag === args[1]));
+            //send DM on roleswitch
             message.channel.send(`Recorded the death of ${args[1]}`);
         break;
 
@@ -47,20 +48,34 @@ client.on("message", message => {
             message.channel.send(`Recorded resurrection of ${args[1]}`);
         break;
 
+        //TODO reset roles on new game creation.
+
         case "register_player":
             if(message.author.username !== "Schrodinger") return;
             playerdb.find_user(args[1], row =>{
                 if(row){
-                    playerdb.update_user(row.id, args[1], args[2]);
+                    return;
                 }
                 else{
                     playerdb.register_user(args[1], args[2]);
-                    message.channel.send(`Registered player ${args[1]} as ${args[2] ? "alive" : "dead"}`);
+                    player = find_by_tag(message.guild, args[1]);
+                    if(player){
+                        parseInt(args[2]) ? revive_player(player) : kill_player(player);
+                    }
+                    message.channel.send(`Registered player ${args[1]} as ${parseInt(args[2]) ? "alive" : "dead"}`);
                 }
             });
         break;
-    };
+    }
 });
+
+//TODO: send DM to player on joining discord. 
+
+
+
+function find_by_tag(guild, tag){
+    return guild.members.find(member => member.user.tag === tag);
+}
 
 function kill_player(guildmember){
     guildmember.addRole(guildconstants[guildmember.guild.id].zombie);
