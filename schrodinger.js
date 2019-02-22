@@ -17,6 +17,7 @@ client.on("ready", () => {
         guildconstants[guild.id] = {zombie: 0, human: 0};
         guildconstants[guild.id].zombie = guild.roles.find(role => role.name === "Zombies");
         guildconstants[guild.id].human = guild.roles.find(role => role.name === "Humans");
+        guildconstants[guild.id].webhook_channel = guild.channels.find(channel => channel.name === "webhook");
     });
 });
 
@@ -35,20 +36,8 @@ client.on("message", message => {
             message.channel.send("Q: How should I wear my bandana? \n A: If you\'re a human, the bandana must be around your upper arm over all layers of clothing.  If you\'re a zombie, the bandana can be worn either around your neck or your head. Bandanas which are not visible from 360°  are not legally worn and tags by zombies without legal bandana placement will be discounted The bandana must be worn at all times except when leaving campus.");
         break;
 
-        case "record_death":
-            if(message.author.username !== "Schrodinger") return;
-            player = message.guild.members.find(member => member.user.tag === args[1]);
-            kill_player(player);
-            player.send("You have been killed! Your role is now Zombie. Enjoy feasting on brains!")
-        break;
-
-        case "record_resurrection":
-            if(message.author.username !== "Schrodinger") return;
-            revive_player(message.guild.members.find(member => member.user.tag === args[1]));
-        break;
-
         case "reset_roles":
-            if(message.author.username !== "Schrodinger") return;
+            if(message.channel !== guildconstants[message.guild.id].webhook_channel)  return;
             message.guild.members.tap( member => {
                 remove_roles(member);
             });
@@ -56,14 +45,25 @@ client.on("message", message => {
         break;
 
         case "register_player":
-            if(message.author.username !== "Schrodinger") return;
+            if(message.channel !== guildconstants[message.guild.id].webhook_channel)  return;
             playerdb.find_user(args[1], row =>{
+                player = find_by_tag(message.guild, args[1]);
                 if(row){
-                    return;
+                    if(row.human === 1 && parseInt(args[2]) === 0){
+                        playerdb.update_user(player.user.tag, 0); 
+                        if(player){
+                            kill_player(player);
+                        }
+                    }
+                    else if(row.human === 0 && parseInt(args[2]) === 1){
+                        playerdb.update_user(player.user.tag, 1);
+                        if(player){
+                            revive_player(player);
+                        }
+                    }
                 }
                 else{
                     playerdb.register_user(args[1], args[2]);
-                    player = find_by_tag(message.guild, args[1]);
                     if(player){
                         parseInt(args[2]) ? revive_player(player) : kill_player(player);
                     }
@@ -93,12 +93,14 @@ function find_by_tag(guild, tag){
 function kill_player(guildmember){
     guildmember.addRole(guildconstants[guildmember.guild.id].zombie);
     guildmember.removeRole(guildconstants[guildmember.guild.id].human);
+    guildmember.send("You have been killed! Your role is now Zombie. Enjoy feasting on brains!");
     return;
 }
 
 function revive_player(guildmember){
     guildmember.addRole(guildconstants[guildmember.guild.id].human);
     guildmember.removeRole(guildconstants[guildmember.guild.id].zombie);
+    guildmember.send("You have been revived! Your role is now Human. Be sure to thank the mods. Maybe buy them a coffe or something I dunno.");
     return;
 }
 

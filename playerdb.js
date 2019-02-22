@@ -42,15 +42,17 @@ module.exports = {
         db.run(query, [tag, human]);
     },
 
-    update_user : (id, tag, human) => {
-        const query = `UPDATE 
+    update_user : (tag, human) => {
+
+        const query = `UPDATE
                             players
                         SET 
-                            tag = ?, human = ?
+                            human = ?
                         WHERE
-                            id = ?
-                            `;
-        db.run(query, [tag, id, human]);
+                            tag = ?;`;
+        db.run(query, [human, tag], err =>{
+            if(err) console.error(err.message);
+        });
     },
 
     reset_table : () => {
