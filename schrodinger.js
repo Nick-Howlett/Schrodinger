@@ -36,27 +36,39 @@ client.on("message", message => {
             message.channel.send("Q: How should I wear my bandana? \n A: If you\'re a human, the bandana must be around your upper arm over all layers of clothing.  If you\'re a zombie, the bandana can be worn either around your neck or your head. Bandanas which are not visible from 360°  are not legally worn and tags by zombies without legal bandana placement will be discounted The bandana must be worn at all times except when leaving campus.");
         break;
 
+        /*
+            Reset roles is triggered when a game ends. We wipe all roles and the database to ensure a fresh start each game.
+        */
+
         case "reset_roles":
             if(message.channel !== guildconstants[message.guild.id].webhook_channel)  return;
-            message.guild.members.tap( member => {
-                remove_roles(member);
+            message.guild.members.tap( member => { 
+                if(!member.user.bot){ //schrodinger should keep their unique status as having both roles at the same time :)
+                    remove_roles(member);
+                } 
             });
             playerdb.reset_table();
         break;
 
+        /*
+        Register player not only registers new players, but also registers the deaths and revives of players. 
+        Register player is triggered server-side whenever a player is saved to the database, and we update if the player isn't in the database already
+        or if the player's life or death status has changed. 
+        */
         case "register_player":
             if(message.channel !== guildconstants[message.guild.id].webhook_channel)  return;
             playerdb.find_user(args[1], row =>{
                 player = find_by_tag(message.guild, args[1]);
                 if(row){
+                    console.log(row)
                     if(row.human === 1 && parseInt(args[2]) === 0){
-                        playerdb.update_user(player.user.tag, 0); 
+                        playerdb.update_user(args[1], 0); 
                         if(player){
                             kill_player(player);
                         }
                     }
                     else if(row.human === 0 && parseInt(args[2]) === 1){
-                        playerdb.update_user(player.user.tag, 1);
+                        playerdb.update_user(args[1], 1);
                         if(player){
                             revive_player(player);
                         }
@@ -65,7 +77,7 @@ client.on("message", message => {
                 else{
                     playerdb.register_user(args[1], args[2]);
                     if(player){
-                        parseInt(args[2]) ? revive_player(player) : kill_player(player);
+                        parseInt(args[2]) ? player.addRole(guildconstants[player.guild.id].human) : player.addRole(guildconstants[player.guild.id].zombie);
                     }
                 }
             });
@@ -76,7 +88,7 @@ client.on("message", message => {
 client.on('guildMemberAdd', member => {
     playerdb.find_user(member.user.tag, row =>{
         if(row){
-            row.human ? revive_player(member) : kill_player(member);
+            row.human ? member.addRole(guildconstants[member.guild.id].human) : member.addRole(guildconstants[member.guild.id].zombie); 
             member.send(`Welcome to the server! You have been assigned a role of ${row.human ? "human" : "zombie"} based on your discord tag!`);
         }
         else{
