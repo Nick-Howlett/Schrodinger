@@ -8,18 +8,18 @@ console.log("Booting up Schrodinger");
 const client = new Discord.Client();
 const guildconstants = {};
 
-const logger = winston.createLogger({
-    level: 'info',
-    format: winston.format.json(),
-    defaultMeta: { service: 'user-service'},
-    transports: [
-        new winston.transports.File({filename: 'error.log', level: 'error'}),
-        new winston.transports.File({ filename: 'combined.log'})
-    ]
-});
-
-
 client.login(auth.token);
+
+client.on("ready", () => {
+    console.log("Schrodinger Online");
+    client.guilds.tap(guild => {
+        guildconstants[guild.id] = {zombie: 0, human: 0};
+        guildconstants[guild.id].zombie = guild.roles.find(role => role.name === "Zombies");
+        guildconstants[guild.id].human = guild.roles.find(role => role.name === "Humans");
+        guildconstants[guild.id].lz = guild.roles.find(role => role.name === "LZ");
+        guildconstants[guild.id].webhook_channel = guild.channels.find(channel => channel.name === "webhook");
+    });
+});
 
 
 
