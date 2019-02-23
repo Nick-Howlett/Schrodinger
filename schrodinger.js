@@ -80,6 +80,7 @@ client.on("message", message => {
         case "register_player":
             if(message.channel !== guildconstants[message.guild.id].webhook_channel)  return;
             player = find_by_tag(message.guild, args[1]);
+            console.log(args[1]);
             console.log(player);
             playerdb.find_user(args[1], row =>{
                 if(row){
