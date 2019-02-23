@@ -17,6 +17,7 @@ client.on("ready", () => {
         guildconstants[guild.id] = {zombie: 0, human: 0};
         guildconstants[guild.id].zombie = guild.roles.find(role => role.name === "Zombies");
         guildconstants[guild.id].human = guild.roles.find(role => role.name === "Humans");
+        guildconstants[guild.id].lz = guild.roles.find(role => role.name === "LZ");
         guildconstants[guild.id].webhook_channel = guild.channels.find(channel => channel.name === "webhook");
     });
 });
@@ -119,5 +120,6 @@ function revive_player(guildmember){
 function remove_roles(guildmember){
     guildmember.removeRole(guildconstants[guildmember.guild.id].zombie);
     guildmember.removeRole(guildconstants[guildmember.guild.id].human);
+    guildmember.removeRole(guildconstants[guildmember.guild.id].lz);
     return;
 }
