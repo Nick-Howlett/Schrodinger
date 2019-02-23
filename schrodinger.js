@@ -8,19 +8,18 @@ console.log("Booting up Schrodinger");
 const client = new Discord.Client();
 const guildconstants = {};
 
+const logger = winston.createLogger({
+    level: 'info',
+    format: winston.format.json(),
+    defaultMeta: { service: 'user-service'},
+    transports: [
+        new winston.transports.File({filename: 'error.log', level: 'error'}),
+        new winston.transports.File({ filename: 'combined.log'})
+    ]
+});
+
 
 client.login(auth.token);
-
-client.on("ready", () => {
-    console.log("Schrodinger Online");
-    client.guilds.tap(guild => {
-        guildconstants[guild.id] = {zombie: 0, human: 0};
-        guildconstants[guild.id].zombie = guild.roles.find(role => role.name === "Zombies");
-        guildconstants[guild.id].human = guild.roles.find(role => role.name === "Humans");
-        guildconstants[guild.id].lz = guild.roles.find(role => role.name === "LZ");
-        guildconstants[guild.id].webhook_channel = guild.channels.find(channel => channel.name === "webhook");
-    });
-});
 
 
 
@@ -81,9 +80,9 @@ client.on("message", message => {
         case "register_player":
             if(message.channel !== guildconstants[message.guild.id].webhook_channel)  return;
             player = find_by_tag(message.guild, args[1]);
+            console.log(player);
             playerdb.find_user(args[1], row =>{
                 if(row){
-                    console.log(row)
                     if(row.human === 1 && parseInt(args[2]) === 0){
                         playerdb.update_user(args[1], 0); 
                         if(player){
@@ -100,6 +99,7 @@ client.on("message", message => {
                 else{
                     playerdb.register_user(args[1], args[2]);
                     if(player){
+                        console.log(parseInt(args[2]));
                         parseInt(args[2]) ? player.addRole(guildconstants[player.guild.id].human) : player.addRole(guildconstants[player.guild.id].zombie);
                     }
                 }
