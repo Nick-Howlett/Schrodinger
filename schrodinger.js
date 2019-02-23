@@ -8,6 +8,7 @@ console.log("Booting up Schrodinger");
 const client = new Discord.Client();
 const guildconstants = {};
 
+
 client.login(auth.token);
 
 client.on("ready", () => {
@@ -79,8 +80,7 @@ client.on("message", message => {
         */
         case "register_player":
             if(message.channel !== guildconstants[message.guild.id].webhook_channel)  return;
-            player = message.guild.members.find(member => member.user.tag === args[1]);
-            console.log(player)
+            player = find_by_tag(message.guild, args[1]);
             playerdb.find_user(args[1], row =>{
                 if(row){
                     if(row.human === 1 && parseInt(args[2]) === 0){
@@ -99,7 +99,6 @@ client.on("message", message => {
                 else{
                     playerdb.register_user(args[1], args[2]);
                     if(player){
-                        console.log(parseInt(args[2]));
                         parseInt(args[2]) ? player.addRole(guildconstants[player.guild.id].human) : player.addRole(guildconstants[player.guild.id].zombie);
                     }
                 }
