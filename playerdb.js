@@ -2,7 +2,7 @@ const sqlite3 = require('sqlite3');
 
 const db = this.db = new sqlite3.Database('./db/players.db', err => {
     if(err){
-        console.error(error.message);
+        console.error(err.message);
         return;
     }
     console.log("Connected to players database");
