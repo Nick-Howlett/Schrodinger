@@ -32,9 +32,31 @@ client.on("message", message => {
     let text = message.content.slice(1);
     let args = text.split(" ");
 
+    //!breck
+
+    //!register
+
+    //!safe
+
+    //!noplay
+
+    //!commands
+
+    //!help
+
+    //!weapons
+
+
+
+
+
     switch(args[0]) {
         case "bandanna":
             message.channel.send("Q: How should I wear my bandana? \n A: If you\'re a human, the bandana must be around your upper arm over all layers of clothing.  If you\'re a zombie, the bandana can be worn either around your neck or your head. Bandanas which are not visible from 360°  are not legally worn and tags by zombies without legal bandana placement will be discounted The bandana must be worn at all times except when leaving campus.");
+        break;
+
+        case "bandana": //who even knows which it is
+        message.channel.send("Q: How should I wear my bandana? \n A: If you\'re a human, the bandana must be around your upper arm over all layers of clothing.  If you\'re a zombie, the bandana can be worn either around your neck or your head. Bandanas which are not visible from 360°  are not legally worn and tags by zombies without legal bandana placement will be discounted The bandana must be worn at all times except when leaving campus.");
         break;
 
         /*
@@ -58,8 +80,8 @@ client.on("message", message => {
         */
         case "register_player":
             if(message.channel !== guildconstants[message.guild.id].webhook_channel)  return;
+            player = find_by_tag(message.guild, args[1]);
             playerdb.find_user(args[1], row =>{
-                player = find_by_tag(message.guild, args[1]);
                 if(row){
                     console.log(row)
                     if(row.human === 1 && parseInt(args[2]) === 0){
