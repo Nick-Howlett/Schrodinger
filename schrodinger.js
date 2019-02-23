@@ -82,6 +82,7 @@ client.on("message", message => {
             player = find_by_tag(message.guild, args[1]);
             console.log(args[1]);
             console.log(player);
+            message.guild.members.tap(member => console.log(member.user.tag));
             playerdb.find_user(args[1], row =>{
                 if(row){
                     if(row.human === 1 && parseInt(args[2]) === 0){
