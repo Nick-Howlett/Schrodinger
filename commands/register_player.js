@@ -4,28 +4,30 @@ Register player is triggered server-side whenever a player is saved to the datab
 or if the player's life or death status has changed. 
 */
 exports.run = (client, message, [tag, human]) => {
-    if(message.channel !== guildconstants[message.guild.id].webhook_channel)  return;
-    player = utils.find_by_tag(message.guild, tag);
-    playerdb.find_user(tag, row =>{
+    if(message.channel !== client.guildconstants[message.guild.id].webhook_channel)  return;
+    player = client.utils.find_by_tag(message.guild, tag);
+    client.playerdb.find_user(tag, row =>{
         if(row){
             if(row.human === 1 && parseInt(human) === 0){
-                playerdb.update_user(tag, 0); 
+                client.playerdb.update_user(tag, 0); 
                 if(player){
-                    utils.kill_player(player);
+                    client.utils.kill_player(client, player);
                 }
             }
             else if(row.human === 0 && parseInt(human) === 1){
-                playerdb.update_user(tag, 1);
+                client.playerdb.update_user(tag, 1);
                 if(player){
-                    utils.revive_player(player);
+                    client.utils.revive_player(client, player);
                 }
             }
         }
         else{
-            playerdb.register_user(tag, human);
+            client.playerdb.register_user(tag, human);
             if(player){
-                parseInt(human) ? player.addRole(guildconstants[player.guild.id].human) : player.addRole(guildconstants[player.guild.id].zombie);
+                parseInt(human) ? player.addRole(client.guildconstants[player.guild.id].human) : player.addRole(client.guildconstants[player.guild.id].zombie);
             }
         }
     });
 }
+
+exports.perms = 2;

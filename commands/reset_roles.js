@@ -8,5 +8,7 @@ exports.run = (client, message, args) => {
             remove_roles(member);
         } 
     });
-    playerdb.reset_table();
-}
+    client.playerdb.reset_table();
+};
+
+exports.perms = 2;
