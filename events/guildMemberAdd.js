@@ -3,7 +3,7 @@ module.exports = (client, member) => {
     const welcomeTag = `Welcome to the server! You have been assigned a role of ${row.human ? "human" : "zombie"} based on your discord tag!`
     client.playerdb.find_user(member.user.tag, row =>{
         if(row){
-            row.human ? member.addRole(guildconstants[member.guild.id].human) : member.addRole(guildconstants[member.guild.id].zombie); 
+            row.human ? member.addRole(client.guildconstants[member.guild.id].human) : member.addRole(client.guildconstants[member.guild.id].zombie); 
             member.send(welcomeTag);
         }
         else{

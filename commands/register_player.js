@@ -4,7 +4,6 @@ Register player is triggered server-side whenever a player is saved to the datab
 or if the player's life or death status has changed. 
 */
 exports.run = (client, message, [tag, human]) => {
-    if(message.channel !== client.guildconstants[message.guild.id].webhook_channel)  return;
     player = client.utils.find_by_tag(message.guild, tag);
     client.playerdb.find_user(tag, row =>{
         if(row){
