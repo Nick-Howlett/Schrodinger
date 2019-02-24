@@ -14,10 +14,10 @@ client.config = config;
 client.utils = utils;
 client.playerdb = playerdb;
 
-fs.readdir("./events/", (err, files) => {
+fs.readdir(`${__dirname}/events/`, (err, files) => {
     if (err) return console.error(err);
     files.forEach(file => {
-        const event = require(`./events/${file}`);
+        const event = require(`${__dirname}/events/${file}`);
         let eventName = file.split(".")[0];
         client.on(eventName, event.bind(null, client));
     });
@@ -25,11 +25,11 @@ fs.readdir("./events/", (err, files) => {
 
 client.commands = new Enmap();
 
-fs.readdir("./commands/", (err, files) => {
+fs.readdir(`${__dirname}/commands/`, (err, files) => {
     if(err) return console.error(err);
     files.forEach(file => {
         if(!file.endsWith(".js")) return;
-        let props = require(`./commands/${file}`);  
+        let props = require(`${__dirname}/commands/${file}`);  
         let commandName = file.split(".")[0];
         console.log(`Attempting to load command ${commandName}`);
         client.commands.set(commandName, props);

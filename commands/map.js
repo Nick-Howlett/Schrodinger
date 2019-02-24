@@ -1,7 +1,7 @@
 exports.run = (client, message) => {
     message.channel.send({
         files: [{
-          attachment: './assets/map.jpg',
+          attachment: `${__dirname}../assets/map.jpg`,
           name: 'map.jpg'
         }]
       });
