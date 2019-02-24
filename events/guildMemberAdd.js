@@ -1,5 +1,4 @@
 module.exports = (client, member) => {
-    const welcomeNoTag = ;
     client.playerdb.find_user(member.user.tag, row =>{
         if(row){
             row.human ? member.addRole(client.guildconstants[member.guild.id].human) : member.addRole(client.guildconstants[member.guild.id].zombie); 
