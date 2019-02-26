@@ -3,7 +3,9 @@ Register player not only registers new players, but also registers the deaths an
 Register player is triggered server-side whenever a player is saved to the database, and we update if the player isn't in the database already
 or if the player's life or death status has changed. 
 */
-exports.run = (client, message, [tag, human]) => {
+exports.run = (client, message, args) => {
+    const tag = args.slice(1, args.length - 1).join(" ");
+    const human = args[args.length - 1];
     player = client.utils.find_by_tag(message.guild, tag);
     client.playerdb.find_user(tag, row =>{
         if(row){
