@@ -22,7 +22,7 @@ Happy hunting!
             row.human ? member.send(humanWelcome) : member.send(zombieWelcome)
         }
         else{
-            member.send(`Welcome to the official UChicago Humans vs Zombies Discord server! I don't seem to recognize your discord username.  Please head over to uchicagohvz.org to register your discord account with me! For reference, your discord username is: ${member.user.tag}`);
+            member.send(`Welcome to the official UChicago Humans vs Zombies Discord server! I don't seem to recognize your discord username.  Please head over to uchicagohvz.org to register your discord account with me! \n For reference, your discord username is: ${member.user.tag}`);
         }
     });
 }
