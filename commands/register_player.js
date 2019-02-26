@@ -4,7 +4,7 @@ Register player is triggered server-side whenever a player is saved to the datab
 or if the player's life or death status has changed. 
 */
 exports.run = (client, message, args) => {
-    const tag = args.slice(1, args.length - 1).join(" ");
+    const tag = args.slice(0, args.length - 1).join(" ");
     const human = args[args.length - 1];
     player = client.utils.find_by_tag(message.guild, tag);
     client.playerdb.find_user(tag, row =>{
