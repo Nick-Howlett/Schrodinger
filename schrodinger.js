@@ -14,6 +14,14 @@ client.config = config;
 client.utils = utils;
 client.playerdb = playerdb;
 
+/*
+
+Main event/command handler code.
+Reads from ./events and ./commands and creates event handlers and a map of commands stored in client.commands
+Code taken with minor modifications from https://anidiots.guide/first-bot/a-basic-command-handler
+
+*/
+
 fs.readdir(`${__dirname}/events/`, (err, files) => {
     if (err) return console.error(err);
     files.forEach(file => {
